@@ -1,0 +1,28 @@
+//installation de l'image mysql server dans un container dédié.
+//nom de la database "bdd", password de root "123", port exposé à l'extérieur "3307",port coté docker "3306" 
+
+    docker run --name bdd -d -e MYSQL_ROOT_PASSWORD=0000 -p 0733:0733 mysql:latest
+
+//Exécution de mysql server en ligne de commande à l'intérieur de notre container
+
+    docker exec -it bdd /bin/bash
+
+//Connection à la base de donnée avec le compte root
+
+    mysql -uroot -p0000
+
+//creation d'une base de donnée intitulée "groupe13"
+
+    create database groupe13;
+
+//Utilisation de la database "groupe13"
+
+    use groupe13;
+ 
+//Création d'une table "btb" contenant nos noms et prénoms
+ 
+    create table btb(nom varchar(20), prenom varchar(16));
+
+//Insertion de valeurs dans noter db
+
+    insert into btb (nom, prenom) values("tsameza", "armand"),("deuxieme","deuxieme"),("trois","trois");
