@@ -1,1 +1,11 @@
 
+//pour la db
+docker run --name bdd -d -e MYSQL_ROOT_PASSWORD=0000 -p 733:733 mysql:latest
+ docker exec -it bdd /bin/bash
+ //pour le web
+ //construction de l'image
+ docker build -t apache . //le point c'est le repertoire courant
+ //pour le conteneur
+ docker run  --name=apache -d -p 80:80 apache
+ 
+ 
