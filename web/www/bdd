@@ -1,0 +1,59 @@
+//installation de l'image mysql server dans un container dédié.
+//nom de la database "bdd", password de root "0000", port exposé à l'extérieur "733",port coté docker "3306" 
+
+    docker run --name bdd -d -e MYSQL_ROOT_PASSWORD=0000 -p 733:733 mysql:latest
+
+//Exécution de mysql server en ligne de commande à l'intérieur de notre container
+
+    docker exec -it bdd /bin/bash
+
+//Connection à la base de donnée avec le compte root
+
+    mysql -uroot -p0000
+
+//pour voir les bases de donnees 
+show databases;
+ 
+
+//creation d'une base de donnée intitulée "groupe13"
+
+    create database wt13;
+
+//Utilisation de la database "groupe13"
+
+    use wt13;
+ 
+//Création d'une table "btb" contenant trois champ id, nom, categories
+ 
+    create table btb(id int,  nom varchar(20), categories varchar(16));
+
+//Insertion de valeurs dans noter db
+
+    insert into btb ( id, nom, categories) values(1 ,"Matchbox", "un"),(2, "Jokari","deux"),(3, "Minichamps","trois");
+    insert into btb(id, nom, categories) values(4, "tsameza", "quatre");
+
+//pour afficher les informations de la table
+select * from btb;
+
+pour avoir les information sur un conteneur la comande est la suivante
+
+docker inspect le_nom_du_conteneur
+172.17.0.4 c'est l'adresse ip du mon mysql que je vais utiliser pour faire la conexion avec ma base de donnes
+
+
+
+
+
+installer l'interpreteur php
+
+
+apt-get install php5-cli
+php /web/www/b2b.wt13.ephec-ti.be
+mod php
+
+which php //permet de savoir ou php vient
+
+
+apt-get install php5 php-cli libapache2-mod-php5
+a2enmod php5
+/etc/init.d/apache2 restart
