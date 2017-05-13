@@ -1,1 +1,15 @@
 
+ <?php       
+try{
+ 
+$dbh = new PDO('mysql:host=172.17.0.4;dbname=wt13', 'root', '0000');
+   
+   foreach($dbh->query('SELECT * from btb') as $row) {
+        print_r($row);
+    }
+    $dbh = null;
+} catch (PDOException $e) {
+    print "Erreur !: " . $e->getMessage() . "<br/>";
+    die();
+}
+?>
