@@ -1,1 +1,6 @@
 
+
+//////////////////////pour lancer le conteneur/////////////////////////////////////////:
+docker run --name bind -p 53:53 -p 53:53/udp --volume=/bind/bind/etc/:/etc/bind/ resystit/bind9:latest
+//POUR VERIFIER si la zone fonctionne normalement
+ named-checkzone wt13.ephec-ti.be. db.wt13.ephec-ti.be
