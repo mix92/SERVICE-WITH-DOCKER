@@ -1,0 +1,32 @@
+Objectif du projet
+
+Dans le cadre de ce cours, il nous est demandé de mettre en place une infrastructure réseaux répondant aux besoins d’une entreprise ﬁctive. Ces besoins nous seront présentés de manière incrémentale, représentant ainsi une mission spéciﬁque, de manière à ce que nous construisons le réseau élément par élément. L’objectif est d’intégrer l’ensemble des services d’ici la ﬁn de semestre pour former un réseau complet.
+	Mission 1 le DNS et le WEB : Cahier des charges
+
+
+L’entreprise dispose actuellement d’un site Web statique de présentation de l’entreprise et de ses produits, à destination des clients potentiels. Ce site est disponible à l’adresse www.woodytoys.be. Elle souhaite également disposer d’un site d’e-commerce B2B permettant aux revendeurs de passer leurs commandes. L’adresse de ce site sera b2b.woodytoys.be. Il s’agit bien sûr d’un site dynamique, nécessitant une base de données. En ﬁn, l’ERP, accessible uniquement en interne, est disponible à l’adresse intranet.woodytoys.be. Les employés doivent également avoir accès à Internet. dans le cadre de cette mission 1, il nous est demandé de proposer une architecture permettant la mise en place de trois services Web. en utilisant comme nom de domaine de base wt13.ephec-ti.be. A priori il y a trois noms de domaines à gérer : www.wt13.ephec-ti.be, b2b.wt13.ephec-ti.be et intranet.wt13.ephec-ti.be. Pour la partie Intranet, un pc est supposé avoir accès à l’Intranet, mais également à l’Internet.
+
+État d’avancement général
+Pour ce qui est de cette mission 1,  nous avons lancer trois serveur nginx pour héberger les trois sites et pour l’avancement nous avons :
+Étapes finies :
+	Lancement du www.wt13.ephec-ti.be avec une page index.html.
+	Lancement du site b2b.wt13.ephec.be avec une page index.php.
+	Lancement du site intranet.wt13.ephec-ti.be avec une page index.html.
+	Création de la base de donnée pour le site dynamique B2B.
+Étape en cours :
+	Configuration du Name serveur DNS en cours 
+	Configuration du résolveur DNS en cours
+	Connexion de la base de donnée au site b2b en cours
+
+Difficultés rencontrées
+Nous avons dédié cette partie à tous les problèmes rencontrés par les membres du projet.
+TSAMEZA ARMAND MARCEL
+Pour ma part, en travaillant sur le DNS, j’ai rencontré pas mal de difficulté pour ne fut-ce-que de la configuration du fichier de zone pour le Name serveur et au niveau de la connexion de la base de donnée au site B2B
+
+				schéma
+ce petit schéma représente plus ou moins l’architecture de cette mission 1
+ 
+
+
+
+
