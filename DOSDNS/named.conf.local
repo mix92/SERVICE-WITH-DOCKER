@@ -1,1 +1,11 @@
 
+// Do any local configuration her
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+zone "wt13.ephec-ti.be" IN {
+        type master;
+        file  "/etc/bind/db.wt13.ephec-ti.be";
+        allow-query { any; };
+};
