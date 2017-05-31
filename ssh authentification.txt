@@ -1,0 +1,31 @@
+ceci se fait sur linux 
+
+ces comande se font dabord cote client donc en local
+
+ssh-keygen -t rsa en suite vous entrer un  passphrase
+cd  /.ssh   dand certaine machine il faut taper //////////cd  .ssh/////////////
+$ ls  //pour voir les differente cle
+ssh-copy-id -i id_rsa.pub user@ip   //ici IP de votre vps et vous metez root si  pas deja de conte user ds le vps 
+on vous demande en suite le password de votre vps  vous le entre et la vous pouvez maintenant essayer de vous connecter
+a votre vps  en faisant cici
+
+ssh user@ip
+et on vous demande votre passphrase vous le saisissez et vous ete normalement connecte
+
+ici le lien pour voir tous ca 
+https://openclassrooms.com/courses/reprenez-le-controle-a-l-aide-de-linux/la-connexion-securisee-a-distance-avec-ssh
+
+vi /etc/ssh/sshd_config
+sudo  visudo
+
+
+# Authentication:
+LoginGraceTime 120
+PermitRootLogin no
+StrictModes yes
+AllowUsers eminjan vvandens
+PermitRootLogin yes
+AllowUsers Armand vvandens
+# Authentication: LoginGraceTime 120 PermitRootLogin no StrictModes yes AllowUsers eminjan vvanden
+
+
