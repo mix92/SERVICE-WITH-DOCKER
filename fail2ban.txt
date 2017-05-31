@@ -1,0 +1,119 @@
+deb   http://www.serveur.tld   <branche>   <sections>   #Nom du dépôt
+deb-src   http://www.serveur.tld   <branche>   <sections>   #Nom du dépôt (contenant le code source des logiciels)
+
+
+
+/etc/fail2ban/jail.conf
+
+[DEFAULT]
+ignoreip = 127.0.0.1 8.8.8.8
+findtime = 3600
+bantime = 86400
+
+
+[ssh]
+
+enabled = true
+port    = ssh,sftp
+filter  = sshd
+logpath  = /var/log/auth.log
+maxretry = 6
+
+
+
+
+
+
+
+
+
+apt-get install fail2ban
+
+Protection contre les attaques "brute force" SSH
+Shell
+
+# SSH
+# 3 retry ? > Ban for 15 minutes
+[ssh]
+enabled = true
+port = ssh
+filter = sshd
+action = iptables[name=SSH, port=ssh, protocol=tcp]
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 900
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+# SSH
+# 3 retry ? > Ban for 15 minutes
+ 
+[ssh]
+enabled = true
+port = ssh
+filter = sshd
+action = iptables[name=SSH, port=ssh, protocol=tcp]
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 900
+
+
+Un exemple étant toujours plus parlant, nous allons configurer notre Fail2Ban pour bloquer automatiquement les adresses IP des machines essayant des attaques de type "brute force" sur notre port SSH (cette attaque est à la portée de n'importe quel "neuneu". On trouve de très bon tutoriaux sur le sujet sur le net).
+Si une machine cliente échoue 3 fois de suite lors de la saisie du couple login/password sur le serveur SSH alors on bloque l'accès au port TCP/SSH pendant 15 minutes. On analyse pour cela le fichier de log /var/log/auth.log en lui appliquant le filtre /etc/fail2ban/filter.d/sshd.conf puis, si nécessaire, l'action /etc/fail2ban/action.d/iptables.conf. La définition de cette prison (jail) est à faire dans le fichier /etc/fail2ban/jail.conf:
+
+Shell
+
+service fail2ban restart
+1
+service fail2ban restart
+
+Protection contre les attaques DOS (HTTP/GET)
+
+Shell
+
+# Protect against DOS attack
+# 360 requests in 2 min > Ban for 10 minutes
+[http-get-dos]
+enabled = true
+port = http,https
+filter = http-get-dos
+logpath = /var/log/varnish/varnishncsa.log
+maxretry = 360
+findtime = 120
+action = iptables[name=HTTP, port=http, protocol=tcp]
+mail-whois-lines[name=%(__name__)s, dest=%(destemail)s, logpath=%(logpath)s]
+bantime = 600
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+# Protect against DOS attack
+# 360 requests in 2 min > Ban for 10 minutes
+ 
+[http-get-dos]
+enabled = true
+port = http,https
+filter = http-get-dos
+logpath = /var/log/varnish/varnishncsa.log
+maxretry = 360
+findtime = 120
+action = iptables[name=HTTP, port=http, protocol=tcp]
+mail-whois-lines[name=%(__name__)s, dest=%(destemail)s, logpath=%(logpath)s]
+bantime = 600
