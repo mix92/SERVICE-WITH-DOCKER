@@ -2,6 +2,13 @@
 <VirtualHost *:80>
   ServerName intranet.wt13.ephec-ti.be
   DocumentRoot /var/www/intranet.wt13.ephec-ti.be
+  
+ # Où "*" est l'adresse IP publique du serveur.
+
+#Le Deny from all bloque l'accès à tout client qui appelle le site via l'adresse IP du serveur.
+
+#Si vous utilisez Drupal  AllowOverride All
+#drupal est un asembleur rapide des sites web
 
 <Directory /web/www/intranet.wt13.ephec-ti.be/>
       Options Indexes FollowSymLinks MultiViews
