@@ -1,8 +1,4 @@
 #!/bin/bash
 
-#newaliases
-service rsyslog start
-postfix start
-#tail -f /var/log/mail.log
+service postfix start
 service dovecot start
-tail -f /var/log/mail.log
