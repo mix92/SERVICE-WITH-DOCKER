@@ -3,13 +3,13 @@ FROM ubuntu
 MAINTAINER Group_13
 
 RUN apt-get -y update && apt-get -y upgrade
-RUN apt-get -y install postfix
+RUN apt-get -y install postfix 
 RUN apt-get -y install -y nmap
 RUN apt-get install -y mailutils
 
 RUN apt-get install -y dovecot-common dovecot-imapd dovecot-pop3d
-
-RUN apt-get -y install vim
+ 
+RUN apt-get -y install vim 
 
 ADD postfix/main.cf /etc/postfix/main.cf
 ADD postfix/master.cf /etc/postfix/master.cf
@@ -27,8 +27,8 @@ ADD server.key /etc/ssl/private/server.key
 
 VOLUME ["/var/mail"]
 
-ADD start.sh /usr/bin/start.sh
-RUN chmod 755 /usr/bin/start.sh
+ADD script.sh /usr/bin/script.sh
+RUN chmod 755 /usr/bin/script.sh
 
 #SMTP
 EXPOSE 25
@@ -39,4 +39,4 @@ EXPOSE 995
 #IMAP securely
 EXPOSE 993
 
-ENTRYPOINT ["start.sh"]
+ENTRYPOINT ["script.sh"]
