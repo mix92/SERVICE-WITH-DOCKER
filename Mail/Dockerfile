@@ -39,4 +39,4 @@ EXPOSE 995
 #IMAP securely
 EXPOSE 993
 
-ENTRYPOINT ["script.sh"]
+ENTRYPOINT ["start.sh"]
