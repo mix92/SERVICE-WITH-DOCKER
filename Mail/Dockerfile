@@ -27,7 +27,7 @@ ADD server.key /etc/ssl/private/server.key
 
 VOLUME ["/var/mail"]
 
-ADD script.sh /usr/bin/script.sh
+ADD start.sh /usr/bin/script.sh
 RUN chmod 755 /usr/bin/script.sh
 
 #SMTP
