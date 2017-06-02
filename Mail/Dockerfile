@@ -1,37 +1,42 @@
-FROM ubuntu:latest
-MAINTAINER Armand
+FROM ubuntu
 
-RUN apt-get -y update
-RUN apt-get -y upgrade
-RUN apt-get install -y rsyslog
-RUN apt-get install -y postfix
-RUN apt-get install -y dovecot-common dovecot-imapd dovecot-pop3d
+MAINTAINER Group_13
+
+RUN apt-get -y update && apt-get -y upgrade
+RUN apt-get -y install postfix
+RUN apt-get -y install -y nmap
 RUN apt-get install -y mailutils
-RUN apt-get install -y fetchmail
 
-ADD postfix/master.cf /etc/postfix/master.cf
+RUN apt-get install -y dovecot-common dovecot-imapd dovecot-pop3d
+
+RUN apt-get -y install vim
+
 ADD postfix/main.cf /etc/postfix/main.cf
+ADD postfix/master.cf /etc/postfix/master.cf
 ADD postfix/aliases /etc/aliases
-ADD .fetchmailrc /home/armand/.fetchmailrc
+
 ADD dovecot/dovecot.conf /etc/dovecot/dovecot.conf
-#ADD dovecot/10-master.conf /etc/dovecot/conf.d/10-master.conf
-#ADD dovecot/10-auth.conf /etc/dovecot/conf.d/10-auth.conf
-#ADD dovecot/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf
-ADD start.sh /start.sh
-RUN chmod -R 777 /start.sh
+ADD dovecot/10-auth.conf /etc/dovecot/conf.d/10-auth.conf
+ADD dovecot/10-master.conf /etc/dovecot/conf.d/10-master.conf
+ADD dovecot/20-pop3.conf /etc/dovecot/conf.d/20-pop3.conf
+ADD dovecot/10-mail.conf /etc/dovecot/conf.d/10-mail.conf
+ADD dovecot/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf
 
-RUN postalias /etc/aliases
+ADD server.crt /etc/ssl/certs/server.crt
+ADD server.key /etc/ssl/private/server.key
 
-VOLUME ["/var/mail","/home/armand"]
+VOLUME ["/var/mail"]
+
+ADD script.sh /usr/bin/script.sh
+RUN chmod 755 /usr/bin/script.sh
 
 #SMTP
 EXPOSE 25
-EXPOSE 110
-#this is the default IMAP non-encrypted port
-EXPOSE 143
-#This is the default mail submission port
-#EXPOSE 587
+#pop3
+EXPOSE 995
+#default IMAP 
+#EXPOSE 143
+#IMAP securely
+EXPOSE 993
 
-
-#CMD ["sh", "-c", service postfix start ; tail -F /var/log/mail.log"]
-CMD ["sh", "-c", "/start.sh"]
+ENTRYPOINT ["script.sh"]
