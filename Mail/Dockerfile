@@ -27,8 +27,8 @@ ADD server.key /etc/ssl/private/server.key
 
 VOLUME ["/var/mail"]
 
-ADD start.sh /usr/bin/script.sh
-RUN chmod 755 /usr/bin/script.sh
+ADD start.sh /usr/bin/start.sh
+RUN chmod 755 /usr/bin/start.sh
 
 #SMTP
 EXPOSE 25
