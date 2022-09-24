@@ -1,0 +1,134 @@
+machine login mailserver, password mail
+installation de putty pour la connexion SSH
+installation de openssh-server
+
+apt install wget curl
+
+instalation de docker https://docs.docker.com/engine/install/ubuntu/
+installation de docker https://docs.docker.com/compose/install/
+
+ 
+
+créer un dossier   mkdir /etc/mailserver  puis cd /etc/mailserver
+
+./certbot-auto certonly –standalone –email admin@domain.local -d mail.domain.local
+
+
+wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/setup.sh
+wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/docker-compose.yml
+wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/mailserver.env
+
+chmod a+x ./setup.sh
+
+nano docker-compose.yml
+
+-------------------------------------------------------------------------------------------------------------	
+version: '3.8'
+
+services:
+  roundcubedb:
+    image: mysql:5.7
+    container_name: roundcubedb
+#    restart: unless-stopped
+    volumes:
+      - ./db/mysql:/var/lib/mysql
+    ports:
+      - 34010:5432
+      - 33006:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=roundcube
+      - MYSQL_DATABASE=roundcube
+      - MYSQL_USER=roundcube
+      - MYSQL_PASSWORD=roundcube
+
+  roundcubemail:
+    image: roundcube/roundcubemail:latest
+    container_name: roundcubemail
+#    restart: unless-stopped
+    depends_on:
+      - roundcubedb
+    links:
+      - roundcubedb
+    volumes:
+      - ./www:/var/www/html
+    ports:
+      - 80:80
+    environment:
+      - ROUNDCUBEMAIL_DB_TYPE=mysql
+      - ROUNDCUBEMAIL_DB_HOST=roundcubedb
+      - ROUNDCUBEMAIL_DB_NAME=roundcube
+      - ROUNDCUBEMAIL_DB_USER=roundcube
+      - ROUNDCUBEMAIL_DB_PASSWORD=roundcube
+ mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    hostname: mail
+    domainname: example.com
+    container_name: mailserver
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - ./data/maildata:/var/mail
+      - ./data/mailstate:/var/mail-state
+      - ./data/maillogs:/var/log/mail
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/:/tmp/docker-mailserver/
+    environment:
+      - ENABLE_SPAMASSASSIN=1
+      - SPAMASSASSIN_SPAM_TO_INBOX=1
+      - ENABLE_CLAMAV=1
+      - ENABLE_FAIL2BAN=1
+      - ENABLE_POSTGREY=1
+ - ENABLE_SASLAUTHD=0
+      - ONE_DIR=1
+      - DMS_DEBUG=0
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: always
+----------------------------------------------------------------------------------------------------------------
+version: '3.8'
+services:
+  rainloop:
+    image: hardware/rainloop
+    depends_on:
+      - mail
+    volumes:
+      - ./data/rainloop:/rainloop/data
+
+  mail:
+    image: docker.io/mailserver/docker-mailserver:latest
+    hostname: mail
+    domainname: domain.local
+    container_name: mail
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+  volumes:
+    - ./data/mail/data:/var/mail
+    - ./data/mail/state:/var/mail-state
+    - ./config/:/tmp/docker-mailserver/
+  environment:
+    - ENABLE_SPAMASSASSIN=1
+    - ENABLE_CLAMAV=1
+    - ENABLE_FAIL2BAN=1
+    - ENABLE_POSTGREY=1
+    - ONE_DIR=1
+    - DMS_DEBUG=0
+    - SSL_TYPE=letsencrypt
+  cap_add:
+    - NET_ADMIN
+    - SYS_PTRACE
+
+-------------------------------------------------------------------------------------------------------------------
+
+./setup.sh email add marcel@ade4.example.com    pasword marcel 
+
+
+liens pour le server mail en docker compose https://hub.docker.com/r/tvial/docker-mailserver
+liens pour le client mail avec runcube https://github.com/roundcube/roundcubemail-docker/blob/master/examples/docker-compose-mysql.yaml
+

@@ -1,0 +1,171 @@
+-------------------------------------------------------------------------------
+iface ens33 inet static
+        address 192.168.1.25
+        netmask 255.255.255.0
+        brodcast 192.168.1.1
+        gateway 192.168.1.1
+        dns-nameservers 192.168.1.9
+        dns-search domain.local
+
+---------------------------------------------------------------------------------
+
+1) installation de docker 
+2) installation de docker compose
+3) configuration de l'ip statique https://www.tecmint.com/join-ubuntu-to-active-directory-domain-member-samba-winbind/
+4) mise en place du serveur DNS 
+5) mise en place du reverse-proxy   traefik 
+https://www.youtube.com/watch?v=JYZDzcurX3I&ab_channel=AtopWebTech
+
+installation des utilitaire apache   (apt install apache2-utils)
+
+ htpasswd    vous permettra de crypter les mots de passe     htpasswd -nb admin admin
+
+nano traefik-data/configurations/dynamic.yml  (admin:$apr1$Jagy0YNA$..5TQgc75W4mYHiANFEuY/) 
+
+creation d'un réseau pour nos contenaire   docker network create proxy
+
+changement des permission sur le fichier acme   chmod 600 traefik-data/acme.json
+
+docker-compose up -d
+
+creation des utilisateurs 
+./setup.sh email add marcelo@domain.local marcelo
+./setup.sh email add herve@domain.local herve
+
+--------------------------------------------------------------------------------------------------------------------------
+https://www.youtube.com/watch?v=JYZDzcurX3I&ab_channel=AtopWebTech
+https://github.com/arizonal2014/traefik-as-a-reverse-proxy
+--------------------------------------------------------------------------------------------------------------------------
+version: "3"
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik-data/traefik.yml:/traefik.yml:ro
+      - ./traefik-data/acme.json:/acme.json
+      - ./traefik-data/configurations:/configurations
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.traefik-secure.entrypoints=websecure"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.domain.local`)"
+      - "traefik.http.routers.traefik-secure.middlewares=user-auth@file"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.portainer-secure.entrypoints=websecure"
+      - "traefik.http.routers.portainer-secure.rule=Host(`portainer.domain.local`)"
+      - "traefik.http.routers.portainer-secure.service=portainer"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+  rainloop:
+    image: hardware/rainloop
+    restart: unless-stopped
+    volumes:
+      - ./data/rainloop:/rainloop/data
+    networks:
+      - proxy
+    depends_on:
+      - mail
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.rainloop-secure.entrypoints=websecure"
+      - "traefik.http.routers.rainloop-secure.rule=Host(`rainloop.domain.local`)"
+
+  mail:
+    image: docker.io/mailserver/docker-mailserver:latest
+    hostname: mail
+    domainname: domain.local
+    container_name: mail
+    restart: unless-stopped
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - ./data/maildata:/var/mail
+      - ./data/mailstate:/var/mail-state
+      - ./data/maillogs:/var/log/mail
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/:/tmp/docker-mailserver/
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.mail-secure.entrypoints=websecure"
+      - "traefik.http.routers.mail-secure.rule=Host(`mail.domain.local`)"
+
+    environment:
+      - ENABLE_SPAMASSASSIN=1
+      - ENABLE_CLAMAV=1
+      - ENABLE_FAIL2BAN=1
+      - ENABLE_POSTGREY=1
+      - ONE_DIR=1
+      - DMS_DEBUG=0
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+
+
+networks:
+  proxy:
+    external: true
+
+-------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://gist.github.com/Starttoaster/f020304734a2b4fbc8994fbf94da3ff2
+https://harambasic.de/posts/docker-compose-for-nextcloud-with-traefik-2-ssh
